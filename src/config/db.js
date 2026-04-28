@@ -10,7 +10,6 @@ export const db = mysql.createPool({
     queueLimit: 0
 });
 
-// Non-blocking connectivity check: keep API running even if DB is down at startup.
 (async () => {
     try {
         const conn = await db.getConnection();
