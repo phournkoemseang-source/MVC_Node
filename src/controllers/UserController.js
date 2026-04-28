@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 
 class UserController {
-    // create method
+  
     static async create(req, res) {
         try {
             // destructuring object
