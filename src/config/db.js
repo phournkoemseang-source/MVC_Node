@@ -10,6 +10,8 @@ export const db = mysql.createPool({
     queueLimit: 0
 });
 
+export default db;
+
 (async () => {
     try {
         const conn = await db.getConnection();
