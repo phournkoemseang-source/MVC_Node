@@ -1,6 +1,4 @@
-
 export default class BaseController {
-    // Respond success
     success(res, message = "Success", data = null, statusCode = 200) {
         return res.status(statusCode).json({
             success: true,
@@ -9,12 +7,11 @@ export default class BaseController {
         });
     }
 
-    // Respond error
-    error(res, message = "Something went wrong", statusCode = 500, error = null) {
+    error(res, message = "Something went wrong", statusCode = 500, details = null) {
         return res.status(statusCode).json({
             success: false,
             message,
-            error
+            error: details
         });
     }
 }

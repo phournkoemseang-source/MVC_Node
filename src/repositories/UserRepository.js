@@ -1,41 +1,69 @@
-import db from '../config/db.js';
-import User from '../models/UserModel.js';
+import { ObjectId } from "mongodb";
+import AppDataSource from "../config/db.js";
+import User from "../domain/entities/User.js";
 
 class UserRepository {
+    get repository() {
+        return AppDataSource.getMongoRepository(User);
+    }
+
+    toObjectId(id) {
+        if (!ObjectId.isValid(id)) {
+            return null;
+        }
+
+        return new ObjectId(id);
+    }
+
     async findAll() {
-        const [rows] = await db.query('SELECT * FROM users');
-        return rows.map(row => new User(row.id, row.name, row.email));
+        return this.repository.find({
+            order: {
+                createdAt: "DESC"
+            }
+        });
     }
 
     async findById(id) {
-        const [rows] = await db.query('SELECT * FROM users WHERE id = ?', [id]);
-        if (rows.length === 0) return null;
-        const user = rows[0];
-        return new User(user.id, user.name, user.email);
+        const objectId = this.toObjectId(id);
+
+        if (!objectId) {
+            return null;
+        }
+
+        return this.repository.findOneBy({ _id: objectId });
+    }
+
+    async findByEmail(email) {
+        return this.repository.findOneBy({
+            email: email.trim().toLowerCase()
+        });
     }
 
     async create(userData) {
-        const { name, email } = userData;
-        const [result] = await db.query(
-            'INSERT INTO users (name, email) VALUES (?, ?)',
-            [name, email]
-        );
-        return new User(result.insertId, name, email);
+        const user = User.create(userData);
+        return this.repository.save(user);
     }
 
     async update(id, userData) {
-        const { name, email } = userData;
-        const [result] = await db.query(
-            'UPDATE users SET name = ?, email = ? WHERE id = ?',
-            [name, email, id]
-        );
-        if (result.affectedRows === 0) return null;
-        return new User(id, name, email);
+        const user = await this.findById(id);
+
+        if (!user) {
+            return null;
+        }
+
+        user.update(userData);
+        return this.repository.save(user);
     }
 
     async delete(id) {
-        const [result] = await db.query('DELETE FROM users WHERE id = ?', [id]);
-        return result.affectedRows > 0;
+        const objectId = this.toObjectId(id);
+
+        if (!objectId) {
+            return false;
+        }
+
+        const result = await this.repository.deleteOne({ _id: objectId });
+        return result.deletedCount > 0;
     }
 }
 

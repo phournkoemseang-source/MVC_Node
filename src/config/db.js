@@ -1,23 +1,26 @@
-import mysql from "mysql2/promise";
+import "reflect-metadata";
+import { DataSource } from "typeorm";
+import env from "./env.js";
+import { UserSchema } from "../infrastructure/database/entities/UserSchema.js";
 
-export const db = mysql.createPool({
-    host: process.env.DB_HOST || "127.0.0.1",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_NAME || "user",
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+export const AppDataSource = new DataSource({
+    type: "mongodb",
+    url: env.mongoUrl,
+    database: env.mongoDatabase,
+    synchronize: true,
+    logging: env.nodeEnv === "development" ? ["error", "warn"] : ["error"],
+    entities: [UserSchema]
 });
 
-export default db;
-
-(async () => {
-    try {
-        const conn = await db.getConnection();
-        conn.release();
-        console.log("Connected to MySQL");
-    } catch (error) {
-        console.warn("MySQL is not reachable yet. Start your MySQL service and retry requests.");
+export async function initializeDatabase() {
+    if (AppDataSource.isInitialized) {
+        return AppDataSource;
     }
-})();
+
+    await AppDataSource.initialize();
+    console.log(`Connected to MongoDB database: ${env.mongoDatabase}`);
+
+    return AppDataSource;
+}
+
+export default AppDataSource;

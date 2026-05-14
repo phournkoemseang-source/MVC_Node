@@ -1,19 +1,32 @@
 {
-  "name": "mvc-node",
+  "name": "clean-architecture-express-typeorm-mongodb",
   "version": "1.0.0",
-  "description": "",
+  "description": "REST API with Express.js, TypeORM, MongoDB, Clean Architecture, and OOP",
   "license": "ISC",
   "author": "",
   "type": "module",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "node src/app.js",
+    "dev": "nodemon src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "express": "^5.2.1",
-    "mysql2": "^3.22.3",
-    "nodemon": "^3.1.14"
-  }
+    "mongodb": "^6.12.0",
+    "nodemon": "^3.1.14",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.20"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phournkoemseang-source/mvc_node.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/phournkoemseang-source/mvc_node/issues"
+  },
+  "homepage": "https://github.com/phournkoemseang-source/mvc_node#readme"
 }
